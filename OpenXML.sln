@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXMLHelperLib", "OpenXMLHelperLib\OpenXMLHelperLib.csproj", "{D5C37F29-CD47-47C6-95C2-1C80C26FE5A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{9FEFF945-5241-4443-89FC-27C876DCC05C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FEFF945-5241-4443-89FC-27C876DCC05C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FEFF945-5241-4443-89FC-27C876DCC05C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5C37F29-CD47-47C6-95C2-1C80C26FE5A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5C37F29-CD47-47C6-95C2-1C80C26FE5A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5C37F29-CD47-47C6-95C2-1C80C26FE5A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5C37F29-CD47-47C6-95C2-1C80C26FE5A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

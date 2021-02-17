@@ -6,7 +6,7 @@ using System.Text;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-
+using OpenXMLHelperLib;
 
 //
 // Links: https://docs.microsoft.com/en-us/office/open-xml/
@@ -22,16 +22,18 @@ namespace ReadExcel
 	{
 		static void Main(string[] args)
 		{
+			string filePath = @"C:\Source\CSharp\Office\OpenXML\Sample.xlsx";
 			SheetData sheetData = null;
 			SharedStringItem item = null;
 			WorkbookPart workbookPart = null;
 			Workbook workbook = null;
 			WorksheetPart worksheetPart = null;
-			string filePath = @"C:\Source\CSharp\Office\OpenXML\Sample.xlsx";
 			StringBuilder text = new StringBuilder();
 			string sheetId = String.Empty;
 			int id = 0;
 
+
+			#region Without Library
 			try
 			{
 				// Open a SpreadsheetDocument for read-only access based on a filepath.
@@ -107,7 +109,88 @@ namespace ReadExcel
 			{
 				Console.WriteLine($"Exception: {ex.Message}");
 			}
+			#endregion
+
+			#region With Library
 			
+			try
+			{
+				// Open a SpreadsheetDocument for read-only access based on a filepath.
+				using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, false))
+				{
+					workbookPart = spreadsheetDocument.WorkbookPart;
+					workbook = workbookPart.Workbook;
+
+					Console.WriteLine("Found the following worksheets: ");
+					foreach (var sheet in workbook.Sheets)
+					{
+						Console.WriteLine($"\t{((Sheet)sheet).Name}");
+						if (((Sheet)sheet).Name == "Sheet1")
+							sheetId = ((Sheet)sheet).Id;
+					}
+
+					// Print Sheet 1
+					text.Clear();
+					Console.WriteLine("\nContents of Sheet1:");
+					worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheetId);
+					sheetData = SpreadsheetHelpers.GetSheetData(worksheetPart).FirstOrDefault();
+					foreach (Row r in SpreadsheetHelpers.GetRows(sheetData))
+					{
+						text.Append("\t|");
+						foreach (Cell c in SpreadsheetHelpers.GetCells(r))
+						{
+							if (c.DataType != null)
+							{
+								switch (c.DataType.Value)
+								{
+									case CellValues.Boolean:
+										text.Append(Convert.ToInt32(c.InnerText)).Append("|");
+										break;
+									case CellValues.SharedString:
+										if (Int32.TryParse(c.InnerText, out id))
+										{
+											item = SpreadsheetHelpers.GetSharedStringTable(workbookPart, id);
+											if (item.Text != null)
+											{
+												text.Append(item.Text.Text).Append("|");
+											}
+											else if (item.InnerText != null)
+											{
+												text.Append(item.InnerText).Append("|");
+											}
+											else if (item.InnerXml != null)
+											{
+												text.Append(item.InnerXml).Append("|");
+											}
+										}
+										break;
+									case CellValues.String:
+										Console.WriteLine("It's a string");
+										break;
+									case CellValues.Date:
+										Console.WriteLine("It's a date");
+										break;
+									case CellValues.Number:
+										Console.WriteLine("It's a number");
+										break;
+								}
+							}
+							else
+							{
+								text.Append(Convert.ToDecimal(c.InnerText)).Append("|");
+							}
+						}
+						Console.WriteLine($"{text}");
+						text.Clear();
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Exception: {ex.Message}");
+			}
+			#endregion
+
 			Console.WriteLine("Press <enter> to end....");
 			Console.ReadLine();
 		}
